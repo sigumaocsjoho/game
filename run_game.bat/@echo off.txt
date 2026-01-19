@@ -1,0 +1,3 @@
+@echo off
+python "C:\Users\242113\test/test.py"
+pause
