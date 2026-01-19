@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ランキング</title>
+
+<style>
+    body {
+        font-family: "Segoe UI", sans-serif;
+        background: #1b1b2f;
+        color: #fff;
+        padding: 20px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #ffd369;
+        text-shadow: 0 0 10px #ffd369;
+    }
+
+    /* ★ タブ */
+    .tabs {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        gap: 6px;
+    }
+
+    .tab {
+        padding: 10px 16px;
+        cursor: pointer;
+        background: #303245;
+        color: #aaa;
+        font-weight: bold;
+        border-radius: 10px;
+        transition: 0.2s;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .tab:hover {
+        transform: scale(1.05);
+        background: #3b3e55;
+    }
+
+    .tab.active {
+        background: #ff9e00;
+        color: #1b1b2f;
+        text-shadow: 0 0 5px #fff;
+    }
+
+    /* ★ テーブル */
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+    .tab-content.active {
+        display: block;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #2d2f48;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    th {
+        background: #ff9e00;
+        padding: 12px;
+        color: #1b1b2f;
+        font-size: 16px;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #3c3f5c;
+    }
+
+    tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    /* 戻るボタン */
+    .back-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        border: 1px solid #fff;
+        transition: 0.2s;
+        z-index: 1000;
+    }
+    .back-btn:hover {
+        background: rgba(255,255,255,0.8);
+        color: #000;
+    }
+
+    /* ★ 自分の順位表示 */
+    #my-rank-box {
+        margin-top: 20px;
+        background: #2d2f48;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 18px;
+        text-align: center;
+        border: 1px solid #ff9e00;
+    }
+</style>
+</head>
+<body>
+
+<a href="home.php" class="back-btn">← 戻る</a>
+
+<h2>ランキング</h2>
+
+<div class="tabs">
+    <div class="tab active" data-target="overall">総合</div>
+    <div class="tab" data-target="stage1">動物園</div>
+    <div class="tab" data-target="stage2">水族館</div>
+    <div class="tab" data-target="stage3">高速道路</div>
+    <div class="tab" data-target="stage4">ハロウィン</div>
+    <div class="tab" data-target="stage5">スーパー</div>
+    <div class="tab" data-target="stage6">J2SA</div>
+</div>
+
+<div id="overall" class="tab-content active"></div>
+<div id="stage1" class="tab-content"></div>
+<div id="stage2" class="tab-content"></div>
+<div id="stage3" class="tab-content"></div>
+<div id="stage4" class="tab-content"></div>
+<div id="stage5" class="tab-content"></div>
+<div id="stage6" class="tab-content"></div>
+
+<!-- ★ 自分の順位表示エリア -->
+<div id="my-rank-box">読み込み中...</div>
+
+<script>
+let myRanks = {};
+
+fetch("ranking.php")
+    .then(res => res.json())
+    .then(data => {
+        // ランキング描画
+        render("overall", data.overall || []);
+        render("stage1", data.stage1 || []);
+        render("stage2", data.stage2 || []);
+        render("stage3", data.stage3 || []);
+        render("stage4", data.stage4 || []);
+        render("stage5", data.stage5 || []);
+        render("stage6", data.stage6 || []);
+
+        // 自分の順位データ保持
+        myRanks = data.myRanks || {};
+
+        // 初期は総合の順位を表示
+        updateMyRank("overall");
+    });
+
+function render(id, list) {
+    const box = document.getElementById(id);
+    if (!list.length) {
+        box.innerHTML = "<p>データがありません</p>";
+        return;
+    }
+
+    let html = `<table>
+        <tr><th>順位</th><th>ユーザー</th><th>スコア</th></tr>`;
+    
+    list.forEach((r, i) => {
+        html += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${r.user_name}</td>
+                <td>${r.score}</td>
+            </tr>`;
+    });
+
+    html += "</table>";
+    box.innerHTML = html;
+}
+
+/* ▼ 自分の順位表示更新 */
+function updateMyRank(key) {
+    const box = document.getElementById("my-rank-box");
+    const data = myRanks[key];
+
+    if (!data) {
+        box.innerHTML = "あなたの記録はありません";
+        return;
+    }
+
+    box.innerHTML = `あなたの順位： <b>${data.rank} 位</b> ／ スコア： <b>${data.score}</b>`;
+}
+
+/* ★ タブ切り替え */
+document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        document.getElementById(tab.dataset.target).classList.add("active");
+
+        // 自分の順位更新
+        updateMyRank(tab.dataset.target);
+    });
+});
+</script>
+
+</body>
+</html>

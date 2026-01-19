@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ログイン / 新規登録 - イラストレールセンター</title>
+<style>
+:root {
+  --twitter-blue: #1da1f2;
+  --text-color: #0f1419;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f50505, #b4bac1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-color);
+}
+
+.card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 420px;
+  padding: 50px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo {
+  font-size: 64px;
+  color: var(--twitter-blue);
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+p {
+  font-size: 15px;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+input {
+  padding: 14px 18px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+input:focus {
+  border-color: var(--twitter-blue);
+  box-shadow: 0 0 0 2px rgba(29,161,242,0.2);
+}
+
+button {
+  padding: 14px;
+  border: none;
+  border-radius: 30px;
+  background: var(--twitter-blue);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #22e10d;
+}
+
+.toggle-link {
+  margin-top: 20px;
+  color: var(--twitter-blue);
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.footer {
+  margin-top: 40px;
+  font-size: 13px;
+  color: #777;
+}
+
+/* アニメーション */
+.form-container {
+  position: relative;
+  height: 330px;
+}
+
+.form-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: all 0.5s ease;
+  opacity: 0;
+  transform: translateY(40px);
+  pointer-events: none;
+}
+
+.form-box.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+@media (max-width: 500px) {
+  .card {
+    padding: 40px 30px;
+    width: 90%;
+  }
+  h1 { font-size: 24px; }
+  p { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">🐦</div>
+
+  <div class="form-container">
+
+    <!-- ログインフォーム -->
+    <div class="form-box active" id="loginForm">
+      <h1>ログイン</h1>
+      <p>アカウントにサインイン</p>
+      <form action="login.php" method="POST">
+        <input type="text" name="username" placeholder="ユーザー名" required>
+        <input type="password" name="password" placeholder="パスワード" required>
+        <button type="submit">ログイン</button>
+      </form>
+      <a class="toggle-link" id="toRegister">新規登録はこちら</a>
+    </div>
+
+    <!-- 登録フォーム -->
+    <div class="form-box" id="registerForm">
+      <h1>新規登録</h1>
+      <p>アカウントを作成します</p>
+      <form action="register.php" method="POST">
+        <input type="text" name="username" placeholder="ユーザー名" required>
+        <input type="password" name="password" placeholder="パスワード" required>
+        <button type="submit">登録する</button>
+      </form>
+      <a class="toggle-link" id="toLogin">ログインに戻る</a>
+    </div>
+
+  </div>
+
+  <div class="footer">© 2025 Illustration Rail Center</div>
+</div>
+
+<script>
+const toRegister = document.getElementById("toRegister");
+const toLogin = document.getElementById("toLogin");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+
+toRegister.addEventListener("click", () => {
+  loginForm.classList.remove("active");
+  registerForm.classList.add("active");
+});
+
+toLogin.addEventListener("click", () => {
+  registerForm.classList.remove("active");
+  loginForm.classList.add("active");
+});
+</script>
+
+</body>
+</html>

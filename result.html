@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>リザルト</title>
+<style>
+body {
+    background: #222;
+    color: white;
+    font-family: sans-serif;
+    text-align: center;
+}
+.badge-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 30px;
+}
+.badge {
+    border: 3px solid white;
+    margin: 10px;
+    padding: 10px;
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    background: #444;
+}
+.badge.rare {
+    border-color: gold;
+    box-shadow: 0 0 15px gold;
+}
+.badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* --- ボタン --- */
+.button-area {
+    display: flex;
+    flex-direction: column; /* 縦に並べる */
+    align-items: center;
+    margin-top: 40px;
+}
+.btn {
+    width: 250px;       /* 横幅を固定して統一 */
+    padding: 15px 0;    /* 高さを統一 */
+    margin: 10px 0;     /* 上下の間隔 */
+    border-radius: 10px;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: center;
+    background: #008CFF; /* デフォルト青 */
+    color: white;
+}
+.btn:hover {
+    background: #0aa2ff;
+}
+.btn.home {
+    background: #28c67a; /* ホーム用緑 */
+}
+.btn.home:hover {
+    background: #2fe389;
+}
+</style>
+</head>
+<body>
+
+<h1>取得したイラスト一覧</h1>
+
+<div class="badge-box" id="badgeBox"></div>
+
+<div class="button-area">
+    <button class="btn home" onclick="goHome()">ホームへ戻る</button>
+    <button class="btn" onclick="playAgain()">もう一度プレイ</button>
+    <button class="btn" onclick="gokollection()">コレクションルームへ</button>
+</div>
+
+<script>
+    const badgeBox = document.getElementById("badgeBox");
+
+    // ▼ 保存されたバッジを読み込み
+    const badges = JSON.parse(localStorage.getItem("collectedBadges") || "[]");
+
+    // ▼ まずは画面にバッジを描画
+    if (badges.length === 0) {
+        badgeBox.innerHTML = "<p>まだ何も取得していません。</p>";
+    } else {
+        badges.forEach(b => {
+            const div = document.createElement("div");
+            div.classList.add("badge");
+            if (b.isRare) div.classList.add("rare");
+
+            div.innerHTML = `<img src="${b.src}">`;
+            badgeBox.appendChild(div);
+        });
+    }
+
+    // ▼ 描画が終わってからサーバーに送信
+    if (badges.length > 0) {
+        fetch("save_badges.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(badges)
+        })
+        .then(res => res.text())
+        .then(data => {
+            console.log("サーバー保存完了:", data);
+            localStorage.removeItem("collectedBadges"); // 保存後削除
+        })
+        .catch(error => {
+            console.error("サーバー保存エラー:", error);
+            localStorage.removeItem("collectedBadges"); // エラーでも削除
+        });
+    }
+
+    // ▼ ホームに戻る
+    function goHome() {
+        window.location.href = "home.php";
+    }
+
+    // ▼ もう一度プレイ
+    function playAgain() {
+        window.location.href = "http://localhost/game_login/home.php?fromGame=true&mode=collection";
+    }
+
+    // ▼ コレクションルームへ向かう
+    function gokollection() {
+        window.location.href = "http://localhost/game_login/collection.php";
+    }
+</script>
+
+
+<audio autoplay loop>
+  <source src="bgm/Drive_on_the_rainy_day.mp3" type="audio/mpeg">
+  お使いのブラウザはaudio要素をサポートしていません。
+</audio>
+
+</body>
+</html>

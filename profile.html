@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>プロフィール</title>
+<style>
+body { margin:0; padding:0; font-family:"Segoe UI",sans-serif; background:#12121f; color:#fff; text-align:center; }
+#profile { width:95%; max-width:900px; margin:20px auto 80px auto; }
+.profile-header { background:#1e1e2e; padding:25px; border-radius:15px; box-shadow:0 0 15px #0008; margin-bottom:25px; }
+.profile-icon { width:120px; height:120px; border-radius:50%; object-fit:cover; border:4px solid #6cf; margin-bottom:10px; }
+.nickname { font-size:28px; font-weight:bold; }
+.card { background:#1e1e2e; border-radius:12px; padding:20px; margin:20px 0; box-shadow:0 0 10px #0007; text-align:left; }
+.card h2 { border-left:5px solid #6cf; padding-left:10px; font-size:20px; margin-bottom:15px; }
+.button-fixed { position:fixed; bottom:15px; left:50%; transform:translateX(-50%); display:flex; gap:15px; }
+.btn { padding:10px 20px; background:#6cf; color:#000; border:none; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; box-shadow:0 0 10px #6cf; transition:0.2s; }
+.btn:hover { background:#9ef; box-shadow:0 0 14px #9ef; }
+@media(max-width:600px){ .nickname{font-size:24px;} .profile-icon{width:100px;height:100px;} .btn{font-size:16px;} }
+</style>
+</head>
+<body>
+
+<div id="profile">
+
+    <div class="profile-header">
+        <img id="icon" class="profile-icon" src="">
+        <div class="nickname" id="nickname"></div>
+        <p>登録日: <span id="created_at"></span></p>
+    </div>
+
+    <div class="card">
+        <h2>ステータス</h2>
+        <p>総プレイ回数: <span id="total_play">0</span></p>
+        <p>全体最高スコア: <span id="best_score_all">0</span></p>
+
+        <h3>ステージ別ベスト</h3>
+        <p>動物園: <span id="best_score_stage1">0</span></p>
+        <p>水族館: <span id="best_score_stage2">0</span></p>
+        <p>高速道路: <span id="best_score_stage3">0</span></p>
+        <p>ハロウィン: <span id="best_score_stage4">0</span></p>
+        <p>スーパー: <span id="best_score_stage5">0</span></p>
+        <p>J2SA: <span id="best_score_stage6">0</span></p>
+    </div>
+
+    <div class="card">
+        <h2>最近のスコア</h2>
+        <ul id="score_history"></ul>
+    </div>
+
+    <div class="card">
+        <h2>取得バッジ</h2>
+        <p>合計: <span id="badge_total">0</span> / 111</p>
+        <p>レア: <span id="badge_rare">0</span></p>
+    </div>
+
+    <div class="card">
+        <h2>称号・アチーブメント</h2>
+        <div id="achievement_list"></div>
+    </div>
+</div>
+
+<div class="button-fixed">
+    <button class="btn" onclick="editProfile()">プロフィール編集</button>
+    <button class="btn" onclick="goHome()">ホームに戻る</button>
+</div>
+
+<script>
+function refreshProfile() {
+    fetch("profile.php")
+    .then(res => res.json())
+    .then(data => {
+        const user = data.user;
+        const stageBest = data.stage_best || {};
+        const badges = data.badges || {};
+        const history = data.history || [];
+        const achievements = data.achievements || [];
+
+        document.getElementById("icon").src = user.icon || "icon/default_icon.png";
+        document.getElementById("nickname").textContent = user.nickname || "名無し";
+        document.getElementById("created_at").textContent = user.created_at;
+
+        document.getElementById("total_play").textContent = data.total_play || 0;
+        document.getElementById("best_score_all").textContent = data.best_score_all || 0;
+
+        for(let i=1;i<=6;i++){
+            const stage = 'stage'+i;
+            document.getElementById('best_score_'+stage).textContent = stageBest[stage] || 0;
+        }
+
+        document.getElementById("badge_total").textContent = badges.total || 0;
+        document.getElementById("badge_rare").textContent = badges.rare_count || 0;
+
+        const ul = document.getElementById("score_history");
+        ul.innerHTML = "";
+        history.forEach(h => {
+            const li = document.createElement("li");
+            li.textContent = `${h.achieved_at} | ${h.stage} | ${h.score}`;
+            ul.appendChild(li);
+        });
+
+        const achList = document.getElementById("achievement_list");
+        achList.innerHTML = "";
+        achievements.forEach(a => {
+            const div = document.createElement("div");
+            div.className = "achievement-card";
+
+            const img = document.createElement("img");
+            img.src = a.icon || "";
+            img.style.border = a.is_rare ? "2px solid gold" : "1px solid #777";
+
+            const p = document.createElement("p");
+            p.textContent = a.name;
+
+            const span = document.createElement("span");
+            span.textContent = a.achieved_at ? "取得済" : "未取得";
+            span.style.color = a.achieved_at ? "#0f0" : "#888";
+            span.style.fontSize = "12px";
+
+            div.appendChild(img);
+            div.appendChild(p);
+            div.appendChild(span);
+            achList.appendChild(div);
+        });
+    });
+}
+
+refreshProfile();
+window.addEventListener("focus", refreshProfile);
+
+function editProfile(){ window.location.href="profile_edit.php"; }
+function goHome(){ window.location.href="home.php"; }
+</script>
+
+</body>
+</html>

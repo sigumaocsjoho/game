@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ユーザー登録</title>
+<style>
+body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: Arial; background: #222; color: white; }
+input, button { padding: 10px; margin: 5px; border-radius: 5px; }
+</style>
+</head>
+<body>
+<h1>ユーザー登録</h1>
+<form id="registerForm">
+  <input type="text" name="username" placeholder="ユーザー名" required><br>
+  <input type="password" name="password" placeholder="パスワード" required><br>
+  <button type="submit">登録</button>
+</form>
+<p>既にアカウントがある場合は <a href="login.html">ログイン</a></p>
+
+<script>
+document.getElementById("registerForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = { username: form.username.value, password: form.password.value };
+
+  const res = await fetch("/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  if (res.ok) {
+    alert("登録成功！ログインしてください。");
+    window.location.href = "/login.html";
+  } else {
+    const text = await res.text();
+    alert("登録失敗: " + text);
+  }
+};
+</script>
+</body>
+</html>
