@@ -1,12 +1,13 @@
 <?php
-$dsn = 'mysql:host=localhost;dbname=game_login;charset=utf8mb4';
+$dsn = 'mysql:host=maglev.proxy.rlwy.net;dbname=railway;port=18346;charset=utf8mb4';
 $user = 'root';
-$pass = ''; // phpMyAdminで設定しているパスワードに合わせる
+$pass = 'TCYxGMGvhaPftphOaiJOAtMtbSYHePCa';
 
 try {
-  $pdo = new PDO($dsn, $user, $pass);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO($dsn, $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "DB接続成功";
 } catch (PDOException $e) {
-  exit('DB接続エラー: ' . $e->getMessage());
+    exit('DB接続エラー: ' . $e->getMessage());
 }
 ?>
