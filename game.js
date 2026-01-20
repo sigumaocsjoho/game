@@ -876,14 +876,19 @@ function draw() {
 }
 
 function checkOrientation() {
+  const notice = document.getElementById("rotateNotice");
+
+  // ★ rotateNotice が無いページでは何もしない
+  if (!notice) return;
+
   const isPortrait = window.innerHeight > window.innerWidth;
-  document.getElementById("rotateNotice").style.display =
-    isPortrait ? "flex" : "none";
+  notice.style.display = isPortrait ? "flex" : "none";
 }
 
 window.addEventListener("resize", checkOrientation);
 window.addEventListener("orientationchange", checkOrientation);
 checkOrientation();
+
 
 // --- ゲームループ ---
 function gameLoop(time) {
@@ -905,4 +910,5 @@ localStorage.removeItem("collectedBadges");
 // 初期セットアップ
 resizeCanvas();
 requestAnimationFrame(gameLoop);
+
 
