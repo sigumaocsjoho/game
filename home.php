@@ -19,6 +19,9 @@ $user_icon = $_SESSION['user_icon'] ?? 'icon/default_icon.png';
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Game Home Screen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="screen-orientation" content="landscape">
+  <meta name="orientation" content="landscape">
 <style>
 body {
   margin: 0; padding: 0;
@@ -283,10 +286,34 @@ button:hover { background-color: rgba(255,255,255,0.9); color: black; }
   display: none; /* 空間も消す */
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+#rotateNotice {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #fff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 9999;
+}
+
 
 </style>
 </head>
 <body>
+  <div id="rotateNotice">
+  端末を横にしてください
+  </div>
 
 <!-- 左上：ログイン中ユーザー -->
 <div class="user-info">
@@ -618,3 +645,4 @@ function playSecretStageIntro() {
 
 </body>
 </html>
+
