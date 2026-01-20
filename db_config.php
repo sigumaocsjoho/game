@@ -12,9 +12,6 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 
-    echo "DB接続成功";
-
 } catch (PDOException $e) {
     exit('DB接続エラー: ' . $e->getMessage());
 }
-?>
