@@ -292,7 +292,6 @@ html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: #000;
 }
 
 #rotateNotice {
@@ -645,4 +644,5 @@ function playSecretStageIntro() {
 
 </body>
 </html>
+
 
