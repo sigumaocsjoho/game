@@ -641,8 +641,36 @@ function playSecretStageIntro() {
   <div id="secretRevealCard"></div>
   <div id="secretRevealText">隠しステージが解放されました</div>
 </div>
+<script>
+function checkOrientation() {
+  const notice = document.getElementById("rotateNotice");
+
+  // スマホ判定
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (!isMobile) {
+    notice.style.display = "none";
+    return;
+  }
+
+  // 縦持ちなら案内表示
+  if (window.innerHeight > window.innerWidth) {
+    notice.style.display = "flex";
+  } else {
+    notice.style.display = "none";
+  }
+}
+
+// 初回チェック
+window.addEventListener("load", checkOrientation);
+
+// 回転・リサイズ時にチェック
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);
+</script>
 
 </body>
 </html>
+
 
 
