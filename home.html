@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Game Home Screen</title>
+
+<style>
+/* ===== 共通 ===== */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: url('haikei/gamecenter_crane01.png') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 80, 185, 1);
+  text-shadow: 2px 2px 4px #000;
+}
+
+h1 {
+  font-size: 60px;
+  margin-bottom: 40px;
+  padding: 10px 25px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+}
+
+h2 {
+  font-size: 32px;
+  padding: 8px 20px;
+  background: rgba(0,0,0,0.35);
+  border-radius: 10px;
+}
+
+.menu, .mode-select, .stage-select {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+button {
+  width: 280px;
+  height: 60px;
+  font-size: 22px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+}
+button:hover {
+  background: rgba(255,255,255,0.9);
+  color: #000;
+}
+
+/* ===== ユーザー表示 ===== */
+.user-info {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,0.5);
+  padding: 6px 12px;
+  border-radius: 20px;
+  z-index: 1000;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+/* ===== ステージ ===== */
+.stage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 220px);
+  gap: 30px;
+}
+
+.stage-card {
+  width: 220px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.stage-card.hidden {
+  display: none;
+}
+
+.stage-thumb {
+  width: 200px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.mode-select, .stage-select {
+  display: none;
+}
+
+/* ===== 画面回転案内 ===== */
+#rotateNotice {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #fff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 9999;
+}
+</style>
+</head>
+
+<body>
+
+<div id="rotateNotice">端末を横にしてください</div>
+
+<!-- ユーザー情報 -->
+<div class="user-info">
+  <img id="userIcon" class="user-icon" src="icon/default_icon.png">
+  <span id="usernameText"></span>
+</div>
+
+<h1 id="title">イラストレールセンター</h1>
+
+<!-- ホーム -->
+<div id="homeMenu" class="menu">
+  <button onclick="goToModeSelect()">スタート</button>
+  <button onclick="showCollection()">コレクション</button>
+  <button onclick="rankingGame()">ランキング</button>
+  <button onclick="logout()">ログアウト</button>
+</div>
+
+<!-- モード -->
+<div id="modeSelect" class="mode-select">
+  <h2>モード選択</h2>
+  <button onclick="selectMode('collection')">コレクション</button>
+  <button onclick="selectMode('score')">スコアアタック</button>
+  <button onclick="backToHome()">戻る</button>
+</div>
+
+<!-- ステージ -->
+<div id="stageSelect" class="stage-select">
+  <h2>ステージ選択</h2>
+  <div class="stage-grid">
+    <div class="stage-card" onclick="startStage(1)">動物園</div>
+    <div class="stage-card" onclick="startStage(2)">水族館</div>
+    <div class="stage-card" onclick="startStage(3)">高速道路</div>
+    <div class="stage-card" onclick="startStage(4)">ハロウィン</div>
+    <div class="stage-card" onclick="startStage(5)">スーパー</div>
+    <div class="stage-card" onclick="startStage(6)">J2SA</div>
+    <div id="secretStage" class="stage-card hidden" onclick="startStage(7)">？？？</div>
+  </div>
+  <button onclick="backToMode()">戻る</button>
+</div>
+
+<script>
+/* ===== ログイン情報（localStorage） ===== */
+const username = localStorage.getItem("username");
+if (!username) location.href = "login.html";
+
+document.getElementById("usernameText").textContent = "ログイン中: " + username;
+
+/* ===== 隠しステージ ===== */
+let SECRET_STAGE_UNLOCKED = localStorage.getItem("secret_stage") === "1";
+
+/* ===== 画面操作 ===== */
+let selectedMode = null;
+
+function goToModeSelect() {
+  homeMenu.style.display = "none";
+  modeSelect.style.display = "flex";
+}
+
+function selectMode(mode) {
+  selectedMode = mode;
+  modeSelect.style.display = "none";
+  stageSelect.style.display = "flex";
+  if (SECRET_STAGE_UNLOCKED) {
+    document.getElementById("secretStage").classList.remove("hidden");
+  }
+}
+
+function startStage(stage) {
+  if (stage === 7 && !SECRET_STAGE_UNLOCKED) {
+    alert("未解放です");
+    return;
+  }
+  location.href = `${selectedMode}_stage${stage}.html`;
+}
+
+function backToMode() {
+  stageSelect.style.display = "none";
+  modeSelect.style.display = "flex";
+}
+
+function backToHome() {
+  modeSelect.style.display = "none";
+  homeMenu.style.display = "flex";
+}
+
+function showCollection() {
+  location.href = "collection.html";
+}
+
+function rankingGame() {
+  location.href = "ranking.html";
+}
+
+function logout() {
+  localStorage.clear();
+  location.href = "login.html";
+}
+
+/* ===== 横画面チェック ===== */
+function checkOrientation() {
+  const notice = document.getElementById("rotateNotice");
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (!isMobile) {
+    notice.style.display = "none";
+    return;
+  }
+  notice.style.display =
+    window.innerHeight > window.innerWidth ? "flex" : "none";
+}
+
+window.addEventListener("load", checkOrientation);
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);
+</script>
+
+</body>
+</html>
