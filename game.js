@@ -875,6 +875,15 @@ function draw() {
   }
 }
 
+function checkOrientation() {
+  const isPortrait = window.innerHeight > window.innerWidth;
+  document.getElementById("rotateNotice").style.display =
+    isPortrait ? "flex" : "none";
+}
+
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);
+checkOrientation();
 
 // --- ゲームループ ---
 function gameLoop(time) {
@@ -896,3 +905,4 @@ localStorage.removeItem("collectedBadges");
 // 初期セットアップ
 resizeCanvas();
 requestAnimationFrame(gameLoop);
+
