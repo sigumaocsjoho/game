@@ -1,5 +1,8 @@
 FROM php:8.2-apache
 
+# ★ ここが超重要：MySQL PDO を入れる
+RUN docker-php-ext-install pdo pdo_mysql
+
 # アプリを配置
 COPY . /var/www/html/
 
