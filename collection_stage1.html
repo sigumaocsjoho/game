@@ -14,6 +14,34 @@
       display: block;
       background: #fff;
     }
+    #mobileControls {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+#mobileControls button {
+  width: 80px;
+  height: 80px;
+  font-size: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+#btnDrop {
+  background: rgba(255,80,80,0.85);
+}
+
   </style>
 </head>
 <body>
@@ -34,6 +62,13 @@
 </div>
 
 <canvas id="gameCanvas"></canvas>
+  <!-- スマホ操作UI -->
+<div id="mobileControls">
+  <button id="btnLeft">◀</button>
+  <button id="btnDrop">▼</button>
+  <button id="btnRight">▶</button>
+</div>
+
 
 <audio id="bgm" loop>
   <source src="bgm/Good_Mover.mp3" type="audio/mpeg">
@@ -43,3 +78,4 @@
 
 </body>
 </html>
+
