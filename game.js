@@ -499,6 +499,42 @@ window.addEventListener("keydown", e => {
 });
 window.addEventListener("keyup", e => keys[e.key] = false);
 
+// ===== スマホ操作 =====
+const btnLeft = document.getElementById("btnLeft");
+const btnRight = document.getElementById("btnRight");
+const btnDrop = document.getElementById("btnDrop");
+
+if (btnLeft && btnRight && btnDrop) {
+
+  btnLeft.addEventListener("touchstart", e => {
+    e.preventDefault();
+    keys["ArrowLeft"] = true;
+  });
+
+  btnLeft.addEventListener("touchend", () => {
+    keys["ArrowLeft"] = false;
+  });
+
+  btnRight.addEventListener("touchstart", e => {
+    e.preventDefault();
+    keys["ArrowRight"] = true;
+  });
+
+  btnRight.addEventListener("touchend", () => {
+    keys["ArrowRight"] = false;
+  });
+
+  btnDrop.addEventListener("touchstart", e => {
+    e.preventDefault();
+    if (!clawMovingDown && !clawMovingUp && playCount < maxPlay) {
+      playCount++;
+      clawOpen = true;
+      clawMovingDown = true;
+    }
+  });
+}
+
+
 // --- クレーン描画 ---
 function drawCrane(x, y) {
   ctx.strokeStyle = "black";
@@ -910,6 +946,7 @@ localStorage.removeItem("collectedBadges");
 // 初期セットアップ
 resizeCanvas();
 requestAnimationFrame(gameLoop);
+
 
 
 
