@@ -786,7 +786,7 @@ canvas.addEventListener("click", e => {
 
   if (mouseX >= backButton.x && mouseX <= backButton.x + backButton.width &&
       mouseY >= backButton.y && mouseY <= backButton.y + backButton.height) {
-    window.location.href = 'home.php?fromGame=true&mode=collection';
+    window.location.href = 'home.html?fromGame=true&mode=collection';
   }
 });
 
@@ -910,5 +910,6 @@ localStorage.removeItem("collectedBadges");
 // 初期セットアップ
 resizeCanvas();
 requestAnimationFrame(gameLoop);
+
 
 
